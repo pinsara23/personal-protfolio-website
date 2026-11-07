@@ -2,6 +2,7 @@ import rawProjects from "@/data/projects.json";
 import { Project } from "@/types/project";
 
 const projects = rawProjects as Project[];
+const featuredOrder = ["mealbridge", "distributed-chat", "smart-paw", "friday", "adaptive-scheduler"];
 
 const duplicateSlugs = projects.filter((project, index) =>
   projects.findIndex((candidate) => candidate.slug === project.slug) !== index
@@ -15,7 +16,15 @@ export function getAllProjects(): Project[] {
 }
 
 export function getFeaturedProjects(): Project[] {
-  return projects.filter((project) => project.featured);
+  const featured = projects.filter((project) => project.featured);
+  return featured.sort((a, b) => {
+    const aIndex = featuredOrder.indexOf(a.id);
+    const bIndex = featuredOrder.indexOf(b.id);
+    if (aIndex === -1 && bIndex === -1) return 0;
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
 }
 
 export function getProjectBySlug(slug: string): Project | undefined {

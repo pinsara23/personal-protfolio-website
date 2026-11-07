@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { ExternalLink, Github } from "lucide-react";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 
@@ -11,6 +12,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
   const listSection = (title: string, items?: string[]) => items?.length ? <section className="detail-section"><h2>{title}</h2><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></section> : null;
   return <><section className="detail-header"><div className="container"><div className="eyebrow">{project.categories.join(" / ")}</div><h1>{project.title}</h1><p className="lead">{project.description}</p><div className="actions">{project.github && <a className="button" href={project.github} target="_blank" rel="noreferrer"><Github size={16}/> View repository</a>}{project.demoUrl && <a className="button primary" href={project.demoUrl}><ExternalLink size={16}/> Watch it live</a>}<span className="button" style={{color:"var(--accent)"}}>{project.status}</span></div></div></section>
     <div className="container detail-layout"><article>
+      {project.images?.length ? <section className="detail-section project-media"><h2>Project preview</h2><div className="project-images">{project.images.map((image) => <Image src={image} alt={`${project.title} project preview`} width={1600} height={900} key={image} />)}</div></section> : null}
       <section className="detail-section"><h2>Overview</h2><p className="prose">{project.overview}</p></section>
       {project.problem && <section className="detail-section"><h2>Problem</h2><p className="prose">{project.problem}</p></section>}
       {listSection("Objectives", project.objectives)}
