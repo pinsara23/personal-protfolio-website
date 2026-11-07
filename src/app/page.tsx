@@ -14,7 +14,7 @@ export default function Home() {
       <h1 className="hero-title">Building systems that turn ambitious ideas into <em>working software.</em></h1>
       <div className="hero-role">Currently exploring <RotatingRole /> systems<span className="blink">_</span></div>
       <p className="lead">{profile.introduction}</p>
-      <div className="actions"><a className="button primary" href={profile.cv}><Download size={16}/> Download CV</a><Link className="button" href="/projects">Explore projects <ArrowRight size={16}/></Link></div>
+      <div className="actions"><a className="button primary" href={profile.cv} download><Download size={16}/> Download CV</a><Link className="button" href="/projects">Explore projects <ArrowRight size={16}/></Link></div>
       <div className="actions" style={{marginTop:20}}><a className="text-link" href={profile.github} target="_blank" rel="noreferrer"><Github size={16}/> GitHub</a>{profile.linkedin && <a className="text-link" href={profile.linkedin} target="_blank" rel="noreferrer"><Linkedin size={16}/> LinkedIn</a>}{profile.email && <a className="text-link" href={`mailto:${profile.email}`}><Mail size={16}/> Email</a>}</div>
     </div></section>
     <section className="section section-blueprint"><div className="container"><div className="section-label">02 / Selected work</div><div className="section-head"><div><h2>Projects with a point of view.</h2></div><p>From embedded hardware to distributed services, each project documents what is built, what is still in progress, and what is deliberately not claimed.</p></div><div className="featured-grid">{featured.map((project, index) => <div className={index === 0 ? "featured-large" : ""} key={project.id}><ProjectCard project={project}/></div>)}</div></div></section>
