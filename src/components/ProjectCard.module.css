@@ -1,0 +1,44 @@
+.demoControls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.liveBadge,
+.playLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-family: "DM Mono", monospace;
+  font-size: .64rem;
+  line-height: 1;
+}
+
+.liveBadge {
+  color: var(--accent);
+}
+
+.playLink {
+  color: var(--text);
+  transition: transform .2s, opacity .2s;
+}
+
+.playLink:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.playLink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playLink {
+    transition: none;
+  }
+}
