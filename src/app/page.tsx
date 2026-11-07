@@ -11,7 +11,7 @@ export default function Home() {
   return <>
     <section id="hero" className="hero hero-living"><ParticleField /><div className="hero-grid" /><div className="container hero-content">
       <div className="eyebrow">01 / Computer Engineering / Sri Lanka</div>
-      <h1>Building systems that turn ambitious ideas into <em>working software.</em></h1>
+      <h1 className="hero-title">Building systems that turn ambitious ideas into <em>working software.</em></h1>
       <div className="hero-role">Currently exploring <RotatingRole /> systems<span className="blink">_</span></div>
       <p className="lead">{profile.introduction}</p>
       <div className="actions"><a className="button primary" href={profile.cv}><Download size={16}/> Download CV</a><Link className="button" href="/projects">Explore projects <ArrowRight size={16}/></Link></div>
