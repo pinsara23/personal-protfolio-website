@@ -22,6 +22,10 @@ Open `http://localhost:3000`. Run `npm run build` to validate the production bui
 
 The app is ready for Vercel: import the repository, keep the default Next.js build settings, and add any public environment values. The portfolio deployment is independent of the distributed chat application's future Kubernetes deployment.
 
+## N-Queens playground
+
+Run the FastAPI solver locally with `NEXT_PUBLIC_API_URL=http://localhost:8000` in `.env.local`. For production, set `NEXT_PUBLIC_API_URL` in Vercel's environment variables to the deployed Render URL.
+
 ## Living Systems design layer
 
 The visual system is centralized in `src/app/globals.css` using the `--bg`, `--surface`, `--line`, `--text`, `--muted`, `--accent`, `--cyan`, `--violet`, and `--amber` tokens. Adjust these variables to retheme the site without changing content.
