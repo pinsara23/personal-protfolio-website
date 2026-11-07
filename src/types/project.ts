@@ -23,6 +23,7 @@ export interface Project {
   status: ProjectStatus;
   featured: boolean;
   github?: string;
+  demoUrl?: string;
   overview: string;
   problem?: string;
   objectives?: string[];

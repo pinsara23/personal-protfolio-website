@@ -249,6 +249,7 @@
     "technologies": ["Python", "Pytest"],
     "status": "Completed",
     "featured": false,
+    "demoUrl": "/playground/n-queens",
     "overview": "The solver models the N-Queens constraints and uses backtracking to explore a board without sharing rows, columns, or diagonals.",
     "objectives": ["Keep solver abstractions modular", "Make invalid placements explicit", "Test the algorithm independently of visualization"],
     "implementation": ["A base solver abstraction supports algorithm implementations.", "The backtracking solver places a queen, checks constraints, and backtracks when a branch is invalid.", "Utility and board modules support visualization and tests."]
