@@ -1,0 +1,3 @@
+import profile from "@/data/profile.json";
+export const metadata = { title: "Skills" };
+export default function SkillsPage() { return <><section id="skills" className="page-hero"><div className="container"><div className="eyebrow">Technical toolkit</div><h1>Tools I use to understand and ship systems.</h1><p className="lead">Grouped by the kind of engineering problem they help solve, not by arbitrary proficiency percentages.</p></div></section><section className="section"><div className="container skill-grid">{Object.entries(profile.skills).map(([name, skills]) => <div className="card" key={name}><div className="eyebrow">{name}</div><div className="tags">{skills.map((skill) => <span className="tag" key={skill}>{skill}</span>)}</div></div>)}</div></section></>; }

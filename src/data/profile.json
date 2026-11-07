@@ -1,0 +1,26 @@
+{
+  "name": "Pinsara Sarathchandra",
+  "role": "Computer Engineering Undergraduate",
+  "university": "University of Sri Jayewardenepura, Sri Lanka",
+  "degree": "Bachelor of Engineering (Honours), Major in Computer Engineering",
+  "studyPeriod": "February 2024 – Present",
+  "expectedGraduation": "2028",
+  "minor": "High Performance Computing",
+  "github": "https://github.com/pinsara23",
+  "linkedin": "",
+  "email": "",
+  "cv": "/documents/Pinsara_Sarathchandra_CV.pdf",
+  "introduction": "I build practical software systems across backend engineering, artificial intelligence, robotics, embedded systems, distributed computing, and high-performance computing. I enjoy understanding how systems work and turning technical ideas into working implementations.",
+  "interests": ["Software Engineering", "Backend Development", "Artificial Intelligence and Machine Learning", "Robotics and Embedded Systems", "Distributed Systems", "High Performance Computing", "Computer Vision", "Cloud Computing and DevOps"],
+  "skills": {
+    "Programming Languages": ["Python", "Java", "C++", "TypeScript", "SQL"],
+    "Backend Development": ["FastAPI", "Spring Boot", "REST APIs", "WebSockets", "JWT"],
+    "AI and Machine Learning": ["PyTorch", "scikit-learn", "LangChain", "Deep Q-Learning"],
+    "Computer Vision": ["OpenCV", "YOLO", "MediaPipe"],
+    "Embedded Systems": ["ESP32", "Arduino", "Embedded C++"],
+    "Databases": ["PostgreSQL", "PostGIS", "Redis", "ChromaDB"],
+    "DevOps and Cloud": ["Docker", "GitHub Actions", "Nginx"],
+    "HPC and Parallel Computing": ["CUDA", "CPU-GPU Scheduling", "Parallel Programming"],
+    "Development Tools": ["Git", "Linux", "ROS 2", "Gazebo"]
+  }
+}
