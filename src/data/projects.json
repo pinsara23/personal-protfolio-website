@@ -213,7 +213,7 @@
     "github": "https://github.com/pinsara23/MealBridge",
     "images": ["/projects/mealbridge/overview.jpg"],
     "overview": "MealBridge combines a secure Java backend with geospatial persistence, live updates, and a quantity prediction service.",
-    "contribution": "My primary contribution was the Spring Boot backend. The platform-level features are described as group work.",
+    "contribution": "My primary contribution was the Spring Boot backend and DevOps part. The platform-level features are described as group work.",
     "implementation": ["Spring Security and JWT protect backend workflows.", "PostgreSQL/PostGIS supports location-aware data.", "WebSocket/STOMP and a Flask Random Forest service extend the backend."],
     "metrics": [{"label": "Compose services", "value": "4", "note": "Repository structure"}, {"label": "Java files", "value": "≈47", "note": "Repository structure"}]
   },
