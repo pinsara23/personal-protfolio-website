@@ -207,7 +207,7 @@
     "shortDescription": "A food donation platform connecting donors and recipients with a Spring Boot backend.",
     "description": "A group food redistribution platform with geospatial data, real-time communication, and a prediction service.",
     "categories": ["Backend Development", "Machine Learning"],
-    "technologies": ["Java", "Spring Boot", "Spring Security", "JWT", "PostgreSQL", "PostGIS", "WebSocket/STOMP", "Python", "Flask", "scikit-learn", "Docker Compose"],
+    "technologies": ["Java", "Spring Boot", "Spring Security", "JWT", "RBAC", "PostgreSQL", "PostGIS", "WebSocket/STOMP", "Python", "Flask", "scikit-learn", "Docker Compose"],
     "status": "Completed",
     "featured": true,
     "github": "https://github.com/pinsara23/MealBridge",
