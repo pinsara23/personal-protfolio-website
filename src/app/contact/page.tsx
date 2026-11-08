@@ -74,24 +74,33 @@ export default function ContactPage() {
       return;
     }
 
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY?.trim();
+    if (!accessKey) {
+      setStatus("error");
+      setStatusMessage("Online delivery is not configured yet. Please email me directly instead.");
+      return;
+    }
+
     setStatus("sending");
     setStatusMessage("");
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15000);
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
+          access_key: accessKey,
           ...values,
+          from_name: "Portfolio Contact",
           botcheck: formData.get("botcheck") === "on",
         }),
         signal: controller.signal,
       });
-      const data = (await response.json()) as { ok?: boolean; error?: string };
-      if (!response.ok || data.ok !== true) {
-        throw new Error(data.error || "The message could not be sent. Please email me directly instead.");
+      const data = (await response.json()) as { success?: boolean; message?: string };
+      if (!response.ok || data.success !== true) {
+        throw new Error(data.message || "The message could not be sent. Please email me directly instead.");
       }
       setValues(initialValues);
       setErrors({});

@@ -20,7 +20,7 @@ Open `http://localhost:3000`. Run `npm run build` to validate the production bui
 
 ## Contact form
 
-The contact form sends messages through a server-side proxy to [Web3Forms](https://web3forms.com). Copy `.env.example` to `.env.local` and set the private `WEB3FORMS_KEY` value from your Web3Forms dashboard. Never use a `NEXT_PUBLIC_` prefix for this key, and keep `.env.local` private and uncommitted. Without a key, the form keeps the typed message and provides a `mailto:` fallback.
+The contact form sends messages directly through [Web3Forms](https://web3forms.com). Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_WEB3FORMS_KEY` to the public access key from your Web3Forms dashboard. Keep `.env.local` private and uncommitted. Without a key, the form keeps the typed message and provides a `mailto:` fallback.
 
 ## Deployment
 
