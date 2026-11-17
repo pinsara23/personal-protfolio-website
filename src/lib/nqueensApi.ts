@@ -32,7 +32,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     });
 
     if (!response.ok) {
-      if (response.status === 422) throw new NQueensApiError("The solver rejected these settings. Choose a board size from 4 to 12.", 422);
+      if (response.status === 422) throw new NQueensApiError("The solver rejected these settings. Check the board size for the selected algorithm.", 422);
       if (response.status === 429) throw new NQueensApiError("The solver is rate-limited right now. Wait a moment and try again.", 429);
       throw new NQueensApiError(`The solver returned an error (${response.status}). Try again shortly.`, response.status);
     }

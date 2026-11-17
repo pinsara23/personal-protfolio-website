@@ -12,6 +12,7 @@ export function Header() {
   return <header className="site-header"><div className="container nav">
     <Link href="/" className="brand" onClick={() => setOpen(false)} aria-label="Pinsara Sarathchandra home"><Image src={logo} alt="" className="brand-logo" priority /></Link>
     <button className="mobile-toggle" aria-label="Toggle navigation" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
+    {open && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} />}
     <nav className={`nav-links ${open ? "open" : ""}`} aria-label="Main navigation">
       {links.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}
       <Link href="/playground/n-queens" onClick={() => setOpen(false)}><Play size={12} aria-hidden="true" /> Queens Lab</Link>

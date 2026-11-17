@@ -4,29 +4,73 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { TraceResponse, TraceStep } from "@/types/nqueens";
 
 export interface PlaybackBoard {
+  /** Keyed by row: queens[row] is the column or null. Never built by appending. */
   queens: (number | null)[];
   tested: { row: number; col: number } | null;
+  /** Row the last move came from (for the slide animation). */
+  movedFrom: number | null;
+  /** Row flashed by a "dead_end" reject. */
+  blockedRow: number | null;
+  /** Latest reported attacking-pair count (min-conflicts). */
+  conflicts: number | null;
   locked: boolean;
+}
+
+export interface PlaybackCounts {
+  placements: number;
+  rejections: number;
+  backtracks: number;
+  solutions: number;
+  moves: number;
+  restarts: number;
 }
 
 function buildBoard(n: number, steps: TraceStep[], currentIndex: number): PlaybackBoard {
   const queens: (number | null)[] = Array.from({ length: n }, () => null);
-  let tested: { row: number; col: number } | null = null;
+  let tested: PlaybackBoard["tested"] = null;
+  let movedFrom: number | null = null;
+  let blockedRow: number | null = null;
+  let conflicts: number | null = null;
   let locked = false;
 
-  steps.slice(0, currentIndex).forEach((step) => {
-    if (typeof step.row === "number" && typeof step.col === "number") {
-      tested = { row: step.row, col: step.col };
-    }
-    if (step.type === "place" && typeof step.row === "number" && typeof step.col === "number") queens[step.row] = step.col;
-    if (step.type === "backtrack" && typeof step.row === "number") queens[step.row] = null;
-    if (step.type === "solution" && step.board) {
-      step.board.forEach((col, row) => { queens[row] = col; });
-      locked = true;
-    }
-  });
+  for (let i = 0; i < currentIndex && i < steps.length; i += 1) {
+    const step = steps[i];
+    const hasCell = typeof step.row === "number" && typeof step.col === "number";
+    if (hasCell) tested = { row: step.row as number, col: step.col as number };
+    movedFrom = null;
+    blockedRow = null;
 
-  return { queens, tested, locked };
+    switch (step.type) {
+      case "place":
+        if (hasCell && (step.row as number) < n) queens[step.row as number] = step.col as number;
+        break;
+      case "backtrack":
+        if (typeof step.row === "number" && step.row < n) queens[step.row] = null;
+        break;
+      case "move":
+        if (hasCell && (step.row as number) < n) {
+          queens[step.row as number] = step.col as number;
+          movedFrom = typeof step.from_col === "number" ? step.from_col : null;
+        }
+        if (typeof step.conflicts === "number") conflicts = step.conflicts;
+        break;
+      case "restart":
+        queens.fill(null);
+        tested = null;
+        conflicts = null;
+        break;
+      case "reject":
+        if (typeof step.blocked_row === "number") blockedRow = step.blocked_row;
+        break;
+      case "solution":
+        if (step.board) step.board.forEach((col, row) => { if (row < n) queens[row] = col; });
+        if (conflicts !== null) conflicts = 0;
+        locked = true;
+        break;
+    }
+  }
+
+  return { queens, tested, movedFrom, blockedRow, conflicts, locked };
 }
 
 export function useTracePlayer(trace: TraceResponse | null, speed: number) {
@@ -37,14 +81,19 @@ export function useTracePlayer(trace: TraceResponse | null, speed: number) {
 
   const board = useMemo(() => buildBoard(trace?.n ?? 0, steps, currentIndex), [trace?.n, steps, currentIndex]);
   const currentStep = currentIndex > 0 ? steps[currentIndex - 1] : undefined;
-  const playedSteps = steps.slice(0, currentIndex);
-  const counts = useMemo(() => playedSteps.reduce((result, step) => {
-    if (step.type === "place") result.placements += 1;
-    if (step.type === "reject") result.rejections += 1;
-    if (step.type === "backtrack") result.backtracks += 1;
-    if (step.type === "solution") result.solutions += 1;
+  const counts = useMemo<PlaybackCounts>(() => {
+    const result = { placements: 0, rejections: 0, backtracks: 0, solutions: 0, moves: 0, restarts: 0 };
+    for (let i = 0; i < currentIndex && i < steps.length; i += 1) {
+      const type = steps[i].type;
+      if (type === "place") result.placements += 1;
+      else if (type === "reject") result.rejections += 1;
+      else if (type === "backtrack") result.backtracks += 1;
+      else if (type === "solution") result.solutions += 1;
+      else if (type === "move") result.moves += 1;
+      else if (type === "restart") result.restarts += 1;
+    }
     return result;
-  }, { placements: 0, rejections: 0, backtracks: 0, solutions: 0 }), [playedSteps]);
+  }, [steps, currentIndex]);
 
   useEffect(() => {
     setCurrentIndex(0);
@@ -69,16 +118,5 @@ export function useTracePlayer(trace: TraceResponse | null, speed: number) {
     setPlaying((value) => !value);
   }, [isFinished]);
 
-  return {
-    board,
-    currentIndex,
-    currentStep,
-    counts,
-    playing,
-    isFinished,
-    stepForward,
-    stepBack,
-    reset,
-    togglePlay,
-  };
+  return { board, currentIndex, currentStep, counts, playing, isFinished, stepForward, stepBack, reset, togglePlay };
 }

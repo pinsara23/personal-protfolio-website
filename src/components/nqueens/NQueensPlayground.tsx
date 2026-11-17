@@ -13,6 +13,9 @@ import { useTracePlayer } from "./useTracePlayer";
 import styles from "./nqueens.module.css";
 
 const MAX_STEPS = 5000;
+const DEFAULT_MAX_N = 12;
+
+interface CompareRow { id: string; name: string; stats?: TraceResponse["stats"]; truncated?: boolean; error?: string }
 
 export function NQueensPlayground() {
   const [n, setN] = useState(8);
@@ -24,6 +27,10 @@ export function NQueensPlayground() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [speed, setSpeed] = useState(240);
+  const [seed, setSeed] = useState("");
+  const [compare, setCompare] = useState<CompareRow[] | null>(null);
+  const selected = algorithms.find((item) => item.id === algorithm);
+  const maxN = selected?.max_n ?? DEFAULT_MAX_N;
   const player = useTracePlayer(trace, speed);
 
   const connect = useCallback(async () => {
@@ -61,13 +68,39 @@ export function NQueensPlayground() {
     setLoading(true);
     setError("");
     try {
-      setTrace(await fetchTrace({ n, algorithm, max_steps: MAX_STEPS, stop_after_first_solution: true }));
+      const parsedSeed = selected?.randomized && seed.trim() !== "" ? Number.parseInt(seed, 10) : undefined;
+      setTrace(await fetchTrace({ n, algorithm, max_steps: MAX_STEPS, stop_after_first_solution: true, ...(Number.isFinite(parsedSeed) ? { seed: parsedSeed } : {}) }));
     } catch (caught) {
       setError(caught instanceof NQueensApiError ? caught.message : "The trace could not be fetched.");
     } finally {
       setLoading(false);
     }
-  }, [algorithm, n]);
+  }, [algorithm, n, selected, seed]);
+
+  const runCompare = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    const rows: CompareRow[] = [];
+    for (const item of algorithms) {
+      if (n > (item.max_n ?? DEFAULT_MAX_N)) { rows.push({ id: item.id, name: item.name, error: `max ${item.max_n}` }); continue; }
+      try {
+        const result = await fetchTrace({ n, algorithm: item.id, max_steps: MAX_STEPS, stop_after_first_solution: true });
+        rows.push({ id: item.id, name: item.name, stats: result.stats, truncated: result.truncated });
+      } catch (caught) {
+        rows.push({ id: item.id, name: item.name, error: caught instanceof NQueensApiError ? caught.message : "failed" });
+      }
+    }
+    setCompare(rows);
+    setLoading(false);
+  }, [algorithms, n]);
+
+  const changeAlgorithm = (value: string) => {
+    setAlgorithm(value);
+    setTrace(null);
+    const next = algorithms.find((item) => item.id === value);
+    const limit = next?.max_n ?? DEFAULT_MAX_N;
+    setN((current) => Math.min(Math.max(current, 4), limit));
+  };
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -80,12 +113,12 @@ export function NQueensPlayground() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [player]);
 
-  const currentDescription = player.currentStep ? `${player.currentStep.type}${typeof player.currentStep.row === "number" ? ` at row ${player.currentStep.row + 1}, column ${(player.currentStep.col ?? 0) + 1}` : ""}${player.currentStep.reason ? `: ${player.currentStep.reason}` : ""}` : "Ready to inspect a solver trace.";
+  const currentDescription = player.currentStep ? `${player.currentStep.type}${typeof player.currentStep.row === "number" ? ` at row ${player.currentStep.row + 1}, column ${(player.currentStep.col ?? 0) + 1}` : ""}${typeof player.currentStep.from_col === "number" ? ` (from column ${player.currentStep.from_col + 1})` : ""}${player.currentStep.reason ? `: ${player.currentStep.reason}` : ""}${typeof player.currentStep.blocked_row === "number" ? ` (row ${player.currentStep.blocked_row + 1} blocked)` : ""}` : "Ready to inspect a solver trace.";
   return <div className={styles.page}>
     <section className={styles.hero}>
       <div className="container">
         <div className="eyebrow">Playground / N-Queens Watch Mode</div>
-        <h1>Watch backtracking<br /><em>make decisions.</em></h1>
+        <h1>Watch the solver<br /><em>make decisions.</em></h1>
         <p className="lead">N-Queens asks the solver to place one queen per row without sharing a column or diagonal. This watch mode renders the real backend trace: placements are tried, conflicts are rejected, and dead ends are undone.</p>
         <ServerStatus state={serverState} message={serverMessage} onRetry={() => void connect()} />
         <p className={styles.wakeNote}>The free backend may sleep between visits. The first request can take 30–60 seconds.</p>
@@ -100,8 +133,15 @@ export function NQueensPlayground() {
           <p className={styles.currentStep} aria-live="polite"><span className="mono">Current event</span> {currentDescription}</p>
         </div>
         <div className={styles.sideColumn}>
-          <Controls n={n} setN={(value) => { setN(value); setTrace(null); }} algorithm={algorithm} setAlgorithm={(value) => { setAlgorithm(value); setTrace(null); }} algorithms={algorithms} onRun={() => void runTrace()} loading={loading} playing={player.playing} onTogglePlay={player.togglePlay} onBack={player.stepBack} onForward={player.stepForward} onReset={player.reset} speed={speed} setSpeed={setSpeed} runDisabled={serverState !== "ready"} playbackDisabled={!trace} />
+          <Controls n={n} setN={(value) => { setN(value); setTrace(null); setCompare(null); }} algorithm={algorithm} setAlgorithm={changeAlgorithm} algorithms={algorithms} selected={selected} maxN={maxN} seed={seed} setSeed={setSeed} onCompare={() => void runCompare()} onRun={() => void runTrace()} loading={loading} playing={player.playing} onTogglePlay={player.togglePlay} onBack={player.stepBack} onForward={player.stepForward} onReset={player.reset} speed={speed} setSpeed={setSpeed} runDisabled={serverState !== "ready"} playbackDisabled={!trace} />
           <StatsPanel counts={player.counts} current={player.currentIndex} total={trace?.steps.length ?? 0} finalStats={trace?.stats} finished={player.isFinished} />
+          {compare && <section className={styles.logPanel} aria-label="Algorithm comparison">
+            <div className={styles.logHeader}><span className="mono">Compare · n = {n}</span><span>first solution</span></div>
+            <table className={styles.compare}>
+              <thead><tr><th>Algorithm</th><th>Place</th><th>Rej</th><th>Back</th><th>ms</th></tr></thead>
+              <tbody>{compare.map((row) => <tr key={row.id}><td>{row.name}</td>{row.stats ? <><td>{row.stats.placements}</td><td>{row.stats.rejections}</td><td>{row.stats.backtracks}</td><td>{row.stats.elapsed_ms}{row.truncated ? "*" : ""}</td></> : <td colSpan={4}>{row.error}</td>}</tr>)}</tbody>
+            </table>
+          </section>}
           <StepLog steps={trace?.steps ?? []} currentIndex={player.currentIndex} />
         </div>
       </div>
