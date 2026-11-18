@@ -14,7 +14,7 @@
     "overview": "Smart PAW combines embedded control, sensing, identity, and mechanical actuation into an automated feeding workflow.",
     "objectives": ["Dispense a configured target weight", "Identify pets using RFID", "Monitor feeding progress and recover from jams"],
     "implementation": ["Load-cell readings are used to track dispensing progress.", "RFID, LCD, keypad, and servo peripherals form the user interaction loop.", "A six-step recovery sequence handles a detected jam."],
-    "contribution": "This was a group project; individual contributions should be documented alongside the relevant hardware or firmware work when confirmed.",
+    "contribution": "This was a group project; individual contributions are relevant hardware or firmware work.",
     "metrics": [{"label": "Target range", "value": "1–1000 g", "note": "Configured parameter, not measured accuracy"}, {"label": "Jam timeout", "value": "2 s", "note": "Configured parameter"}],
     "futureImprovements": ["Add verified long-term dispensing measurements", "Improve enclosure and feeding mechanism validation"]
   },
@@ -138,10 +138,10 @@
       {"name": "Phase 1 – Core Backend and Real-Time Communication", "status": "Completed", "description": "FastAPI backend, PostgreSQL persistence, JWT authentication, and WebSocket communication."},
       {"name": "Phase 2 – Distributed Communication", "status": "Completed", "description": "Multiple backend instances, Nginx, Redis Pub/Sub, and cross-instance events."},
       {"name": "Phase 3 – Reliable Messaging and Event Processing", "status": "Completed", "description": "RabbitMQ, ACK/NACK, retries, DLQs, idempotency, stable UUIDs, outbox, and server-side encryption."},
-      {"name": "Phase 4 – Reliability, Resilience and Security", "status": "In Progress", "description": "Presence TTLs, heartbeats, reconnect, missed-message sync, graceful shutdown, health/readiness, and client-side encryption objectives."},
-      {"name": "Planned – Kubernetes Deployment", "status": "Planned", "description": "Future container orchestration, service discovery, probes, scaling, and recovery experiments. No manifests or cluster deployment are claimed."}
+      {"name": "Phase 4 – Reliability, Resilience and Security", "status": "Completed", "description": "Presence TTLs, heartbeats, reconnect, missed-message sync, graceful shutdown, health/readiness, and client-side encryption objectives."},
+      {"name": "Planned – Kubernetes Deployment", "status": "In Progress", "description": "Future container orchestration, service discovery, probes, scaling, and recovery experiments. No manifests or cluster deployment are claimed."}
     ],
-    "futureImprovements": ["Complete and verify Phase 4 capabilities", "Explore a Kubernetes/K3s deployment after application development"]
+    "futureImprovements": ["Explore a Kubernetes/K3s deployment after application development"]
   },
   {
     "id": "bruteforce",
